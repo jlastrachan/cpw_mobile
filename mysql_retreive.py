@@ -16,11 +16,22 @@ def open_table():
 	cnx = mysql.connector.connect(**config)
 	return cnx
 
-def search_table_day_time(cnx, day, time):
+def search_table(cnx, day, time, type):
 	cursor = cnx.cursor()
-	query = ("SELECT id FROM events "
-		"WHERE day = %s AND startTime <= %s AND endTime >= %s")
-	cursor.execute(query, (day, time, time))
+	query_str = ''
+	if day is not 'no':
+		query_str += 'day = %s' % day
+	if time is not 'no':
+		if query_str is not '':
+			query_str += ' AND '
+		query_str += 'endTime >= %s' % time
+	if type is not 'no':
+		if query_str is not '':
+			query_str += ' AND '
+		query_str += '%s=True' %s type
+
+	query = ("SELECT id FROM events WHERE " + query_str)
+	cursor.execute(query)
 	result = [id for (id,) in cursor]
 	cursor.close()
 	return result
@@ -53,13 +64,11 @@ if 'day' in inputs and 'time' in inputs and 'type' in inputs:
 		time = time[:time.index(' ')]
 		time += ':00'
 	event_type = inputs['type'].value
-	if event_type == 'false':
-		print toAngelXML(search_table_day_time(cnx, day, time))
-	else:
-		print toAngelXML(sesarch_table_type(cnx, event_type))
+	print toAngelXML(sesarch_table(cnx, day, time, event_type))
 else:
 	day = "Thursday"
 	time = "12:00:00"
-	print toAngelXML(search_table_day_time(cnx, day, time))
+	type = 'no'
+	print toAngelXML(search_table(cnx, day, time, type))
 	
 close_table(cnx)
