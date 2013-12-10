@@ -7,7 +7,7 @@ inputs = cgi.FieldStorage()
 if 'myarray' in inputs:
 	myarray = inputs.getlist('myarray')
 else:
-	myarray = ['test1', 'test2']
+	myarray = []
 mystring = ''
 for elt in myarray:
 	mystring += elt + ','
@@ -22,7 +22,7 @@ print '<PLAY>'
 print '<PROMPT type="text">.' # no prompt 
 print '</PROMPT>' 
 print '</PLAY>' 
-print '<GOTO destination="/1" />' # have to say the page number!!! 
+print '<GOTO destination="/42" />' # have to say the page number!!! 
 print '</MESSAGE>' 
 print '<VARIABLES>' 
 print '<VAR name="myarrayasastring" value="' + mystring + '"/>' 

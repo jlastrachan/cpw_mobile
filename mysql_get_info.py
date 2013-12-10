@@ -16,6 +16,17 @@ def open_table():
 	cnx = mysql.connector.connect(**config)
 	return cnx
 
+def format_time(time):
+	# Go from xx:xx:xx to xx:xx am/pm
+	hour = time[:time.index(':')]
+	time_of_day = ' am'
+	if int(hour) >= 12:
+		time_of_day = ' pm'
+		if int(hour) > 12:
+			hour = str(int(hour) - 12)
+	time = time[time.index(':') +1:]
+	return hour+':'+time[:time.index(':')]+time_of_day
+
 def search_table_id(cnx, id):
 	cursor = cnx.cursor()
 	query = ("SELECT name, startTime, endTime, location, description, day FROM events "
@@ -24,6 +35,8 @@ def search_table_id(cnx, id):
 	result = None
 	for (name, start, end, location, desc, day) in cursor:
 		# IDs are unique, so return first one.
+		start = format_time(str(start))
+		end = format_time(str(end))
 		result = {'name': name, 'startTime': start, 'endTime': end, 'location': location, 'description': desc, 'day': day}
 	cursor.close()
 	return result
@@ -41,9 +54,9 @@ def toAngelXML(info, page):
 	    <VAR name="curr_day" value=""" + '"'
 	xmlstring += info['day'] + '"' + """/>
 	    <VAR name="curr_startTime" value="""
-	xmlstring += '"' + info['startTime'] + '"' + """/>
+	xmlstring += '"' + str(info['startTime']) + '"' + """/>
 	    <VAR name="curr_endTime" value="""
-	xmlstring += '"' + info['endTime'] + '"' + """/>
+	xmlstring += '"' + str(info['endTime']) + '"' + """/>
 	    <VAR name="curr_location" value="""
 	xmlstring += '"' + str(info['location']) + '"' + """/>
 	    <VAR name="curr_description" value="""
@@ -60,7 +73,7 @@ if 'id' in inputs and 'page' in inputs:
 	print toAngelXML(search_table_id(cnx, id), page)
 else:
 	id = "1"
-	page = "15"
+	page = "34"
 	print toAngelXML(search_table_id(cnx, id), page)
 	
 close_table(cnx)

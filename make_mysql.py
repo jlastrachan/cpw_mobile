@@ -35,23 +35,20 @@ def close_table(cnx):
 
 cnx = open_table()
 f = open('cpw_events.csv')
-i = 0
 file = f.readline()
 for line in file.split('%%'):
-	print i
-	i+=1
 	items = line.split('|')
-	day = items[0]
-	start_time = items[1]
-	end_time = items[2]
-	name = items[3]
-	location = items[4]
-	description = items[5]
+	day = items[0].strip()
+	start_time = items[1].strip()
+	end_time = items[2].strip()
+	name = items[3].strip()
+	location = items[4].strip()
+	description = items[5].strip()
 	types = items[6:]
 	for i in range(len(types)):
 		types[i] = types[i].strip()
 	type_dict = {}
-	type_list = ['featured', 'minority', 'studentorg', 'dorm', 'livinggroup', 'academic', 'athletic', 'class', 'arts', 'parents', 'tour', 'religious']
+	type_list = ['food', 'party', 'featured', 'minority', 'studentorg', 'dorm', 'livinggroup', 'academic', 'athletic', 'class', 'arts', 'parents', 'tour', 'religious']
 	for type in type_list:
 		type_dict[type] = (type in types)	
 	cursor = cnx.cursor()
